@@ -1,4 +1,4 @@
-name: Terraform Basic Check
+name: Terraform Deploy
 
 on:
   push:
@@ -16,8 +16,20 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform Init (no backend)
-      run: terraform init -backend=false
+    # 🔐 Login to Azure
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Terraform Validate
-      run: terraform validate
+    # 🔥 Init (now WITH backend)
+    - name: Terraform Init
+      run: terraform init
+
+    # 🔍 Plan
+    - name: Terraform Plan
+      run: terraform plan
+
+    # 🚀 Apply (AUTO DEPLOY)
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
